@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { jsPDF } from "jspdf";
+import axios from "axios"; // Import axios for API calls
 
 const DocumentGenerator = () => {
   const [docType, setDocType] = useState("");
@@ -61,57 +62,37 @@ const DocumentGenerator = () => {
     }
   };
 
-  const handleGeneratePDF = () => {
-    if (!docType) {
-      alert("Please select a document type.");
-      return;
-    }
+const handleSubmit = async () => {
+  if (!docType || Object.keys(formData).length === 0) {
+    alert("Please fill in all fields before submitting.");
+    return;
+  }
 
-    const doc = new jsPDF();
-    let yOffset = 20;
-
-    const logo = new Image();
-    logo.src = "/tamilnadu-police-logo.png";
-    doc.addImage(logo, "PNG", 80, yOffset, 50, 50);
-    yOffset += 60;
-
-    doc.setFontSize(16);
-    doc.text(docType, 80, yOffset);
-    yOffset += 10;
-
-    if (photo) {
-      doc.addImage(photo, "JPEG", 10, yOffset, 40, 40);
-    } else {
-      doc.rect(10, yOffset, 40, 40);
-      doc.text("Photo", 20, yOffset + 20);
-    }
-
-    doc.setFontSize(12);
-    doc.text(`Name: ${formData.Name || ""}`, 60, yOffset + 20);
-    yOffset += 50;
-
-    doc.setFontSize(12);
-    doc.text("Document Details", 80, yOffset - 5);
-
-    let startX = 10;
-    let startY = yOffset;
-    let colWidth = 90;
-    let rowHeight = 10;
-
-    fieldSets[docType].forEach((field, index) => {
-      doc.rect(startX, startY + index * rowHeight, colWidth, rowHeight);
-      doc.rect(startX + colWidth, startY + index * rowHeight, colWidth, rowHeight);
-      doc.text(field, startX + 2, startY + index * rowHeight + 7);
-      doc.text(formData[field] || "", startX + colWidth + 2, startY + index * rowHeight + 7);
+  try {
+    const response = await fetch("http://localhost:5000/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        docType,
+        fields: formData,
+        photo,
+      }),
     });
 
-    let tableEndY = startY + fieldSets[docType].length * rowHeight;
-
-    doc.text("Signature", 80, tableEndY + 20);
-    doc.line(60, tableEndY + 25, 140, tableEndY + 25);
-
-    doc.save("document.pdf");
-  };
+    const result = await response.json();
+    if (response.ok) {
+      alert("Document saved successfully!");
+      setFormData({});
+      setDocType("");
+      setPhoto(null);
+    } else {
+      alert("Error: " + result.message);
+    }
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    alert("Failed to save document. Try again.");
+  }
+};
 
   return (
     <div style={styles.page}>
@@ -142,7 +123,12 @@ const DocumentGenerator = () => {
             />
 
             <label style={styles.label}>Upload Photo:</label>
-            <input type="file" accept="image/*" onChange={handlePhotoUpload} style={styles.input} />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              style={styles.input}
+            />
 
             {photo && <img src={photo} alt="Uploaded" style={styles.preview} />}
 
@@ -157,8 +143,8 @@ const DocumentGenerator = () => {
               </div>
             ))}
 
-            <button onClick={handleGeneratePDF} style={styles.button}>
-              Generate PDF
+            <button style={styles.button} onClick={handleSubmit}>
+              Submit
             </button>
           </div>
         )}
@@ -176,7 +162,7 @@ const styles = {
     minHeight: "100vh",
     background: "#111827",
     padding: "40px 20px",
-    marginTop:"2rem"
+    marginTop: "4rem",
   },
   container: {
     width: "100%",
