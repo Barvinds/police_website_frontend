@@ -70,18 +70,15 @@ const DocumentGenerator = () => {
     const doc = new jsPDF();
     let yOffset = 20;
 
-    // Add logo
     const logo = new Image();
     logo.src = "/tamilnadu-police-logo.png";
     doc.addImage(logo, "PNG", 80, yOffset, 50, 50);
     yOffset += 60;
 
-    // Add title
     doc.setFontSize(16);
     doc.text(docType, 80, yOffset);
     yOffset += 10;
 
-    // Add uploaded photo
     if (photo) {
       doc.addImage(photo, "JPEG", 10, yOffset, 40, 40);
     } else {
@@ -89,12 +86,10 @@ const DocumentGenerator = () => {
       doc.text("Photo", 20, yOffset + 20);
     }
 
-    // Name field next to the photo
     doc.setFontSize(12);
     doc.text(`Name: ${formData.Name || ""}`, 60, yOffset + 20);
     yOffset += 50;
 
-    // Document details in table format
     doc.setFontSize(12);
     doc.text("Document Details", 80, yOffset - 5);
 
@@ -112,7 +107,6 @@ const DocumentGenerator = () => {
 
     let tableEndY = startY + fieldSets[docType].length * rowHeight;
 
-    // Signature
     doc.text("Signature", 80, tableEndY + 20);
     doc.line(60, tableEndY + 25, 140, tableEndY + 25);
 
@@ -182,9 +176,11 @@ const styles = {
     minHeight: "100vh",
     background: "#111827",
     padding: "40px 20px",
+    marginTop:"2rem"
   },
   container: {
-    width: "600px",
+    width: "100%",
+    maxWidth: "600px",
     padding: "20px",
     borderRadius: "8px",
     boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
@@ -234,9 +230,9 @@ const styles = {
     marginTop: "10px",
   },
   preview: {
-    width: "100px",
-    height: "100px",
-    objectFit: "cover",
+    width: "100%",
+    maxWidth: "120px",
+    height: "auto",
     marginTop: "10px",
     borderRadius: "5px",
     border: "1px solid #ccc",
