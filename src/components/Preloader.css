@@ -1,0 +1,40 @@
+.preloader {
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    width: 100%;
+    background: #111827;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    overflow: hidden !important;
+}
+
+.texts-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    width: 200px; /* Increased width for more space */
+    font-size: 16px;
+    overflow: hidden;
+    font-weight: 600;
+    opacity: 0;
+    color: white;
+    gap: 2px; /* Adds space between text elements */
+    
+}
+
+/* Responsive for mobile */
+@media (max-width: 600px) {
+    .texts-container {
+        font-size: 18px;
+        width: 200px;
+        gap: 2px; 
+    }
+}
