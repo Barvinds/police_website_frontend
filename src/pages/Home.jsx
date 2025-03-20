@@ -7,6 +7,9 @@ const Home = () => {
       width: "100%",
       height: "100vh",
       backgroundImage: "url('bg2.webp')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -21,6 +24,7 @@ const Home = () => {
       alignItems: "center",
       justifyContent: "center",
       textAlign: "center",
+      padding: "20px",
     },
     content: {
       color: "white",
@@ -45,6 +49,24 @@ const Home = () => {
       width: "100%",
       height: "100%",
       borderRadius: "10px",
+    },
+    // Responsive styles
+    "@media (max-width: 768px)": {
+      homeSection: {
+        height: "100vh",
+      },
+      heading: {
+        fontSize: "2rem",
+      },
+      paragraph: {
+        fontSize: "1rem",
+      },
+      videoLogo: {
+        width: "60px",
+        height: "60px",
+        bottom: "10px",
+        left: "10px",
+      },
     },
   };
 
