@@ -25,20 +25,51 @@ const List = () => {
   // Download PDF
   const downloadPDF = (doc) => {
     const pdf = new jsPDF();
-    pdf.text(`Document Type: ${doc.docType}`, 10, 10);
-    pdf.text(`Father Name: ${doc.fatherName}`, 10, 20);
-    pdf.text(`Address: ${doc.address}`, 10, 30);
+  
+    // Add logo at the top center
+    const logoUrl = "tamilnadu-police-logo.png"; // Update with your logo path
+    pdf.addImage(logoUrl, "PNG", 75, 10, 50, 20); // Centered at top
+  
+    // Add photo on the left side
+    const photoUrl = doc.photo;
+    pdf.addImage(photoUrl, "JPEG", 10, 40, 40, 40); // Left side
+  
+    // Add name on the right side of the photo
+    pdf.setFontSize(14);
+    pdf.text(`Document Type: ${doc.docType}`, 60, 50);
+    pdf.text(`Father Name: ${doc.fatherName}`, 60, 60);
+    pdf.text(`Address: ${doc.address}`, 60, 70);
+  
+    // Additional details below
+    pdf.text("Additional Information:", 10, 90);
+    pdf.text("This document contains confidential information.", 10, 100);
+  
+    // Signature section at the bottom
+    pdf.line(10, 140, 80, 140); // Signature line
+    pdf.text("Signature", 10, 150);
+  
+    // Save the PDF
     pdf.save(`${doc.docType}.pdf`);
   };
 
   // Delete document
   const deleteDocument = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/documents/${id}`);
-      setDocuments((prevDocs) => prevDocs.filter((doc) => doc._id !== id));
-      setSelectedDocument(null);
-    } catch (error) {
-      console.error("Error deleting document:", error);
+    const password = prompt("Enter password to delete:");
+    if (!password) return alert("Password is required!");
+  
+    if (window.confirm("Are you sure you want to delete this document?")) {
+      try {
+        const response = await axios.delete(`http://localhost:5000/documents/${id}`, {
+          data: { password },
+        });
+  
+        alert(response.data.message);
+        setDocuments((prevDocs) => prevDocs.filter((doc) => doc._id !== id));
+        setSelectedDocument(null);
+      } catch (error) {
+        console.error("Error deleting document:", error);
+        alert(error.response?.data?.message || "Failed to delete the document.");
+      }
     }
   };
 

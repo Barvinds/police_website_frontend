@@ -48,12 +48,24 @@ app.post('/upload', async (req, res) => {
 });
 
 // Delete a document
-app.delete('/delete/:id', async (req, res) => {
+app.delete("/documents/:id", async (req, res) => {
   try {
-    await Document.findByIdAndDelete(req.params.id);
+    const { id } = req.params;
+    const { password } = req.body;
+
+    // Check if password is correct (store securely in .env)
+    if (password !== process.env.DELETE_PASSWORD) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    const deletedDoc = await Document.findByIdAndDelete(id);
+    if (!deletedDoc) {
+      return res.status(404).json({ message: "Document not found" });
+    }
     res.json({ message: "Document deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
