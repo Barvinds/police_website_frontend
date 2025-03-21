@@ -69,7 +69,7 @@ const handleSubmit = async () => {
   }
 
   try {
-    const response = await fetch("https://police-website-frontend.vercel.app/upload", {
+    const response = await fetch("https://police-website-frontend-backend.vercel.app/upload", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
