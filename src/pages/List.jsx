@@ -15,7 +15,7 @@ const List = () => {
   // Fetch documents from the backend
   const fetchDocuments = async () => {
     try {
-      const response = await axios.get("https://police-website-frontend-backend.vercel.app/documents");
+      const response = await axios.get("https://police-website-backend.onrender.com/api/documents");
       setDocuments(response.data);
     } catch (error) {
       console.error("Error fetching documents:", error);
@@ -34,7 +34,7 @@ const List = () => {
   // Delete document
   const deleteDocument = async (id) => {
     try {
-      await axios.delete(`https://police-website-frontend-backend.vercel.app/documents/${id}`);
+      await axios.delete(`https://police-website-backend.onrender.com/api/documents/${id}`);
       setDocuments((prevDocs) => prevDocs.filter((doc) => doc._id !== id));
       setSelectedDocument(null);
     } catch (error) {
@@ -45,7 +45,7 @@ const List = () => {
   // Add new document
   const addDocument = async () => {
     try {
-      const response = await axios.post("https://police-website-frontend-backend.vercel.app/documents", newDocument);
+      const response = await axios.post("https://police-website-backend.onrender.com/api/documents", newDocument);
       setDocuments([...documents, response.data]);
       setNewDocument({ docType: "", fatherName: "", address: "", photo: "" });
     } catch (error) {
