@@ -69,7 +69,7 @@ const handleSubmit = async () => {
   }
 
   try {
-    const response = await fetch("https://police-website-backend.onrender.com/api/upload", {
+    const response = await fetch("http://localhost:5000/upload", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
