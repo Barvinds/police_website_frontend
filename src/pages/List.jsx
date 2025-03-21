@@ -6,6 +6,7 @@ const List = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [documents, setDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState(null);
+  const [newDocument, setNewDocument] = useState({ docType: "", fatherName: "", address: "", photo: "" });
 
   useEffect(() => {
     fetchDocuments();
@@ -21,32 +22,45 @@ const List = () => {
     }
   };
 
-  // Filter documents based on search
-  const filteredDocuments = documents.filter((doc) =>
-    doc.docType.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Download PDF
+  const downloadPDF = (doc) => {
+    const pdf = new jsPDF();
+    pdf.text(`Document Type: ${doc.docType}`, 10, 10);
+    pdf.text(`Father Name: ${doc.fatherName}`, 10, 20);
+    pdf.text(`Address: ${doc.address}`, 10, 30);
+    pdf.save(`${doc.docType}.pdf`);
+  };
 
-  // Handle document deletion
-  const handleDelete = async (id) => {
+  // Delete document
+  const deleteDocument = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/delete/${id}`);
-      setDocuments(documents.filter((doc) => doc._id !== id));
+      await axios.delete(`http://localhost:5000/documents/${id}`);
+      setDocuments((prevDocs) => prevDocs.filter((doc) => doc._id !== id));
+      setSelectedDocument(null);
     } catch (error) {
       console.error("Error deleting document:", error);
     }
   };
 
-  // Generate and download PDF
-  const handleDownload = (doc) => {
-    const pdf = new jsPDF();
-    pdf.text(`Document Type: ${doc.docType}`, 10, 10);
-    pdf.text(`Father Name: ${doc.fields.fatherName}`, 10, 20);
-    pdf.text(`Address: ${doc.fields.address}`, 10, 30);
-    pdf.save(`${doc.docType}.pdf`);
+  // Add new document
+  const addDocument = async () => {
+    try {
+      const response = await axios.post("http://localhost:5000/documents", newDocument);
+      setDocuments([...documents, response.data]);
+      setNewDocument({ docType: "", fatherName: "", address: "", photo: "" });
+    } catch (error) {
+      console.error("Error adding document:", error);
+    }
   };
+
+  // Filter documents based on search
+  const filteredDocuments = documents.filter((doc) =>
+    doc.docType.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={styles.page}>
+      <h2 style={{ color: "#fff" }}>Manage Documents</h2>
       <input
         type="text"
         placeholder="Search documents..."
@@ -54,16 +68,19 @@ const List = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         style={styles.searchBar}
       />
+
       <div style={styles.resultsContainer}>
         {filteredDocuments.length > 0 ? (
           filteredDocuments.map((doc) => (
             <div key={doc._id} style={styles.card}>
-              <img src={doc.photo} alt="Document" style={styles.image} />
-              <h3>{doc.docType}</h3>
-              <div style={styles.buttons}>
-                <button onClick={() => setSelectedDocument(doc)}>Details</button>
-                <button onClick={() => handleDownload(doc)}>Download</button>
-                <button onClick={() => handleDelete(doc._id)}>Delete</button>
+              <div style={styles.cardContent}>
+                <img src={doc.photo} alt="Document" style={styles.image} />
+                <h3>{doc.docType}</h3>
+              </div>
+              <div>
+                <button style={styles.detailsButton} onClick={() => setSelectedDocument(doc)}>Details</button>
+                <button style={styles.downloadButton} onClick={() => downloadPDF(doc)}>Download</button>
+                <button style={styles.deleteButton} onClick={() => deleteDocument(doc._id)}>Delete</button>
               </div>
             </div>
           ))
@@ -77,8 +94,8 @@ const List = () => {
         <div style={styles.modal}>
           <h2>{selectedDocument.docType} Details</h2>
           <img src={selectedDocument.photo} alt="Document" style={styles.modalImage} />
-          <p>Father Name: {selectedDocument.fields.fatherName}</p>
-          <p>Address: {selectedDocument.fields.address}</p>
+          <p>Father Name: {selectedDocument.fatherName}</p>
+          <p>Address: {selectedDocument.address}</p>
           <button onClick={() => setSelectedDocument(null)}>Close</button>
         </div>
       )}
@@ -87,12 +104,18 @@ const List = () => {
 };
 
 const styles = {
-  page: { display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", background: "#111827", padding: "40px 20px"},
-  searchBar: { width: "80%", padding: "10px", fontSize: "16px", marginBottom: "10px" ,marginTop:"8rem"},
-  resultsContainer: { display: "flex", flexWrap: "wrap", gap: "20px", justifyContent: "center", width: "80%" },
-  card: { background: "#fff", padding: "15px", borderRadius: "8px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", textAlign: "center", width: "200px" },
-  image: { width: "100%", height: "120px", objectFit: "cover", borderRadius: "8px" },
-  buttons: { display: "flex", flexDirection: "column", gap: "10px", marginTop: "10px" },
+  page: { display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", background: "#111827", padding: "40px 20px" },
+  searchBar: { width: "80%", padding: "10px", fontSize: "16px", marginBottom: "10px", marginTop: "1rem" },
+  addContainer: { display: "flex", flexDirection: "column", gap: "10px", width: "80%", background: "#222", padding: "20px", borderRadius: "8px", marginBottom: "20px" },
+  input: { padding: "10px", fontSize: "16px", borderRadius: "5px", border: "1px solid #ccc" },
+  addButton: { padding: "10px", background: "#28a745", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" },
+  resultsContainer: { display: "flex", flexDirection: "column", gap: "10px", width: "80%" },
+  card: { display: "flex", justifyContent: "space-between", alignItems: "center", background: "#fff", padding: "15px", borderRadius: "8px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", width: "100%" },
+  cardContent: { display: "flex", alignItems: "center", gap: "20px" },
+  image: { width: "60px", height: "60px", objectFit: "cover", borderRadius: "8px" },
+  detailsButton: { padding: "8px 16px", background: "#007bff", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer", marginRight: "5px" },
+  downloadButton: { padding: "8px 16px", background: "#17a2b8", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer", marginRight: "5px" },
+  deleteButton: { padding: "8px 16px", background: "#dc3545", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" },
   noResults: { padding: "8px", textAlign: "center", color: "#888" },
   modal: { position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "#fff", padding: "20px", borderRadius: "8px", boxShadow: "0 4px 8px rgba(0,0,0,0.1)", textAlign: "center" },
   modalImage: { width: "100px", height: "100px", borderRadius: "8px" },
