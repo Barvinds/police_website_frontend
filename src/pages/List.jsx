@@ -37,8 +37,8 @@ const List = () => {
     // Add name on the right side of the photo
     pdf.setFontSize(14);
     pdf.text(`Document Type: ${doc.docType}`, 60, 50);
-    pdf.text(`Father Name: ${doc.fatherName}`, 60, 60);
-    pdf.text(`Address: ${doc.address}`, 60, 70);
+    pdf.text(`Name: ${doc.name}`, 60, 60);
+    pdf.text(`Complaint Details: ${doc.complaint}`, 60, 70);
   
     // Additional details below
     pdf.text("Additional Information:", 10, 90);
@@ -122,14 +122,14 @@ const List = () => {
 
       {/* Modal for details */}
       {selectedDocument && (
-        <div style={styles.modal}>
-          <h2>{selectedDocument.docType} Details</h2>
-          <img src={selectedDocument.photo} alt="Document" style={styles.modalImage} />
-          <p>Father Name: {selectedDocument.fatherName}</p>
-          <p>Address: {selectedDocument.address}</p>
-          <button onClick={() => setSelectedDocument(null)}>Close</button>
-        </div>
-      )}
+  <div style={styles.modal}>
+    <h2>{selectedDocument.docType} Details</h2>
+    <img src={selectedDocument.photo} alt="Document" style={styles.modalImage} />
+    <p>Name: {selectedDocument.name}</p>
+    <p>Complaint Details: {selectedDocument.complaint}</p>
+    <button onClick={() => setSelectedDocument(null)}>Close</button>
+  </div>
+)}
     </div>
   );
 };

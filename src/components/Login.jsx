@@ -15,7 +15,7 @@ const Login = ({ onLogin }) => {
             justifyContent: "center",
             alignItems: "center",
             height: "100vh",
-            backgroundColor: "#f4f4f4",
+            backgroundColor: "#111827",
         },
         box: {
             background: "white",

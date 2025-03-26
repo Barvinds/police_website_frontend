@@ -97,7 +97,7 @@ const Scan = () => {
   return (
     <div style={pageStyle}>
       <div style={containerStyle}>
-        <h1 style={titleStyle}>Face Recognition System</h1>
+        <h1 style={titleStyle}>Face Matching System</h1>
         <video ref={videoRef} autoPlay playsInline muted style={{ width: '100%', maxWidth: '500px', borderRadius: '0.5rem', marginBottom: '1rem' }}></video>
         <canvas ref={canvasRef} width={500} height={300} style={{ display: 'none' }}></canvas>
         <div>

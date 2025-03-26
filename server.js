@@ -17,13 +17,15 @@ mongoose.connect(process.env.MONGO_URI, {
 }).then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
 
-const documentSchema = new mongoose.Schema({
-  docType: String,
-  fields: { fatherName: String, address: String },
-  photo: String,
-});
-
-const Document = mongoose.model('Document', documentSchema);
+  const DocumentSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    docType: { type: String, required: true },
+    complaint: { type: String, required: true }, // Ensure this field exists
+    photo: { type: String, required: true },
+  });
+  
+  const Document = mongoose.model("Document", DocumentSchema);
+  
 
 // Fetch all documents
 app.get('/documents', async (req, res) => {
@@ -35,12 +37,17 @@ app.get('/documents', async (req, res) => {
   }
 });
 
-// Upload a new document
 app.post('/upload', async (req, res) => {
   try {
-    const { docType, fields, photo } = req.body;
-    const newDocument = new Document({ docType, fields, photo });
+    const { name, docType, complaint, photo } = req.body;
+
+    if (!name || !docType || !complaint || !photo) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const newDocument = new Document({ name, docType, complaint, photo });
     await newDocument.save();
+
     res.status(201).json({ message: "Document saved successfully" });
   } catch (err) {
     res.status(500).json({ message: err.message });

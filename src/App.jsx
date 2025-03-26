@@ -11,6 +11,7 @@ import Scan from "./pages/Scan";
 import DocumentGenerator from "./pages/Document";
 import List from "./pages/List";
 
+
 const App = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
@@ -29,7 +30,7 @@ const App = () => {
     }, []);
 
     const handleLogin = (username, password) => {
-        if (username === "admin" && password === "password") {
+        if (username === "admin" && password === "1234") {
             setIsAuthenticated(true);
             localStorage.setItem("isAuthenticated", "true");
             setShowPopup(true);
@@ -53,10 +54,10 @@ const App = () => {
             ) : showPopup ? (
                 <div className="popup">
                     <div className="popup-content">
-                        <h2>TAMIL NADU</h2>
+                        <h2>PLEASE SELECT LANGUAGE</h2>
                         <TranslateWidget />
                         <p>POLICE</p>
-                        <button onClick={handleAccept}>Accept</button>
+                        <button onClick={handleAccept}>Submit</button>
                     </div>
                 </div>
             ) : (

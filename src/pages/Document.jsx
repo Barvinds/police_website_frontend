@@ -31,7 +31,7 @@ const DocumentGenerator = () => {
       "Court Name",
       "Lawyer's Name",
       "Petition Details",
-      "Supporting Documents",
+      "Complaint Details",
     ],
     "Anticipatory Bail": [
       "Father's / Husband's Name",
@@ -41,7 +41,7 @@ const DocumentGenerator = () => {
       "Case Number",
       "Court Name",
       "Reason for Anticipatory Bail",
-      "Details of Allegations",
+      "Complaint Details",
       "Lawyer's Name",
       "Supporting Evidence",
     ],
@@ -62,37 +62,39 @@ const DocumentGenerator = () => {
     }
   };
 
-const handleSubmit = async () => {
-  if (!docType || Object.keys(formData).length === 0) {
-    alert("Please fill in all fields before submitting.");
-    return;
-  }
-
-  try {
-    const response = await fetch("http://localhost:5000/upload", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        docType,
-        fields: formData,
-        photo,
-      }),
-    });
-
-    const result = await response.json();
-    if (response.ok) {
-      alert("Document saved successfully!");
-      setFormData({});
-      setDocType("");
-      setPhoto(null);
-    } else {
-      alert("Error: " + result.message);
+  const handleSubmit = async () => {
+    if (!formData["Name"] || !docType || !formData["Complaint Details"] || !photo) {
+      alert("Please fill in all required fields before submitting.");
+      return;
     }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    alert("Failed to save document. Try again.");
-  }
-};
+  
+    try {
+      const response = await fetch("http://localhost:5000/upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData["Name"], // Get name from formData
+          docType,
+          complaint: formData["Complaint Details"], // Store complaint correctly
+          photo,
+        }),
+      });
+  
+      const result = await response.json();
+      if (response.ok) {
+        alert("Document saved successfully!");
+        setFormData({});
+        setDocType("");
+        setPhoto(null);
+      } else {
+        alert("Error: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Failed to save document. Try again.");
+    }
+  };
+   
 
   return (
     <div style={styles.page}>

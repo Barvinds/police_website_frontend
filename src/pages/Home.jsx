@@ -6,7 +6,7 @@ const Home = () => {
       position: "relative",
       width: "100%",
       height: "100vh",
-      backgroundImage: "url('bg2.webp')",
+      backgroundImage: "url('bg3.webp')",
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
